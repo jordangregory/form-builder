@@ -64,7 +64,7 @@ var formData = [
   },
   {
     type: "tel",
-    label: "Mobil Number",
+    label: "Mobile Number",
     id: "user-mobile",
     icon: "fa-mobile-phone",
     options: []
@@ -81,15 +81,48 @@ var formData = [
 function buildForm() {
   var formInputsWrapper = document.querySelector("#formInputsWrapper");
 
-  //With the above form data, "forEach" run this function.
   formData.forEach(function(element, index, array) {
+    //created form wrapper
+    var elementWrapper = document.createElement("div");
+    elementWrapper.classList.add("inputContainer");
+
+    //created the form element
+    var newElement;
     //if it's a text area, we're not making an input, because textareas are not inputs
-    if (elements.type === "textarea") {
+    if (element.type === "textarea") {
+      newElement = document.createElement("textarea");
+    } else if (element.type === "select") {
+      newElement = document.createElement("select");
+      var placeHolderOption = document.createElement("option");
+      placeHolderOption.label = element.label;
+      newElement.appendChild(placeHolderOption);
+      element.options.forEach(function(element, index) {
+        var newOption = document.createElement("option");
+        newOption.label = element.label;
+        newOption.value = element.value;
+        newElement.appendChild(newOption);
+      });
     } else {
-      //for everything else, we're making an input
-      var newInputElem = document.createElement("input");
-      newInputElem.setAttribute("type", element.type);
-      formInputsWrapper.appendChild(newInputElem);
+      newElement = document.createElement("input");
+      newElement.type = element.type;
     }
+
+    newElement.placeholder = element.label;
+    newElement.id = element.id;
+    newElement.classList.add("addedElement");
+
+    //create icon
+    if (element.type != "select") {
+      var iconElement = document.createElement("i");
+      iconElement.classList.add("fa");
+      iconElement.classList.add(element.icon);
+      elementWrapper.appendChild(iconElement);
+    }
+
+    //stuff we appended (added to)
+    elementWrapper.appendChild(newElement);
+    formInputsWrapper.appendChild(elementWrapper);
   });
 }
+
+buildForm();
